@@ -1,8 +1,19 @@
-plugins {
-    id 'org.asciidoctor.convert' version '1.5.3'
-    id 'com.github.jruby-gradle.base' version '1.2.0'
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+    }
 }
+
 apply plugin: 'scala'
+apply plugin: 'gradle-one-jar'
+
+repositories {
+    jcenter()
+}
 
 ext {
     akkaV = "2.4.2"
@@ -13,4 +24,8 @@ dependencies {
     compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: akkaV
     compile group: 'com.typesafe.akka', name: 'akka-http-experimental_2.11', version: akkaHttpV
     compile group: 'com.typesafe.akka', name: 'akka-http-spray-json-experimental_2.11', version: akkaHttpV
+}
+
+task completeJar(type: OneJar) {
+    mainClass = 'hackathon.pi.api.PiApiCan'
 }
