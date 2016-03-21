@@ -25,7 +25,6 @@ dependencies {
     compile group: 'com.typesafe.akka', name: 'akka-http-experimental_2.11', version: akkaHttpV
     compile group: 'com.typesafe.akka', name: 'akka-http-spray-json-experimental_2.11', version: akkaHttpV
     compile group: 'org.rxtx', name: 'rxtx', version: '2.1.7'
-    compile group: 'org.ardulink', name: 'ardulink-core', version: '0.6.1'
 }
 
 task completeJar(type: OneJar) {

@@ -20,10 +20,15 @@ object PiApiCan extends App {
   val route: Route = get {
     path("brul") {
       complete("Brul!")
-    } ~ path("a") {
-      Arduino.toArduino("bladiebla")
-      complete("arduino")
+    } ~ pathPrefix("arduino") {
+      pathEndOrSingleSlash {
+        complete("arduino")
+      } ~ path(Segment) { input: String =>
+        Arduino.toArduino(input)
+        complete(s"arduino - show $input")
+      }
     }
+
   }
 
   // `route` will be implicitly converted to `Flow` using `RouteResult.route2HandlerFlow`
