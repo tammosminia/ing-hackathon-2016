@@ -18,7 +18,12 @@ object PiApiCan extends App {
   val port = 8081
 
   val route: Route = get {
-    complete("Brul!")
+    path("brul") {
+      complete("Brul!")
+    } ~ path("a") {
+      Arduino.toArduino("bladiebla")
+      complete("arduino")
+    }
   }
 
   // `route` will be implicitly converted to `Flow` using `RouteResult.route2HandlerFlow`
