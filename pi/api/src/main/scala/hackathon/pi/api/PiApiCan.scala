@@ -1,14 +1,16 @@
 package hackathon.pi.api
 
-import akka.actor.ActorSystem
+import akka.actor.{Props, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{RouteResult, Route}
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
+import akka.pattern.ask
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
+import scala.util.Success
 
 object PiApiCan extends App {
   implicit val system = ActorSystem("PiApiSystem")
@@ -17,14 +19,18 @@ object PiApiCan extends App {
   implicit val timeout = Timeout(5.seconds)
   val port = 8081
 
+  val arduinoActor = system.actorOf(Props[ArduinoActor], "arduinoActor")
+
   val route: Route = get {
     path("brul") {
       complete("Brul!")
     } ~ pathPrefix("arduino") {
       pathEndOrSingleSlash {
-        complete("arduino")
+        onComplete(arduinoActor ? ArduinoActor.GetInput) {
+          case Success(input: List[String]) => complete(input.mkString("\n"))
+        }
       } ~ path(Segment) { input: String =>
-        Arduino.toArduino(input)
+        arduinoActor ! ArduinoActor.SendToArduino(input)
         complete(s"arduino - show $input")
       }
     }
