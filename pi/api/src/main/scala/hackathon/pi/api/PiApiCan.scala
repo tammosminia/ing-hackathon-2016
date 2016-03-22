@@ -19,22 +19,26 @@ object PiApiCan extends App {
   implicit val timeout = Timeout(5.seconds)
   val port = 8081
 
-  val arduinoActor = system.actorOf(Props[ArduinoActor], "arduinoActor")
+//  val arduinoActor = system.actorOf(Props[ArduinoActor], "arduinoActor")
+  val knakenActor = system.actorOf(Props[KnakenActor], "knakenActor")
 
   val route: Route = get {
     path("brul") {
       complete("Brul!")
-    } ~ pathPrefix("arduino") {
-      pathEndOrSingleSlash {
-        onComplete(arduinoActor ? ArduinoActor.GetInput) {
-          case Success(input: List[String]) => complete(input.mkString("\n"))
-        }
-      } ~ path(Segment) { input: String =>
-        arduinoActor ! ArduinoActor.SendToArduino(input)
-        complete(s"arduino - show $input")
+//    } ~ pathPrefix("arduino") {
+//      pathEndOrSingleSlash {
+//        onComplete(arduinoActor ? ArduinoActor.GetInput) {
+//          case Success(input: List[String]) => complete(input.mkString("\n"))
+//        }
+//      } ~ path(Segment) { input: String =>
+//        arduinoActor ! ArduinoActor.SendToArduino(input)
+//        complete(s"arduino - show $input")
+//      }
+    } ~ path("knaken") {
+      onComplete(knakenActor ? KnakenActor.GetKnaken) {
+        case Success(knaken: Int) => complete(s"Je hebt $knaken knaken.")
       }
     }
-
   }
 
   // `route` will be implicitly converted to `Flow` using `RouteResult.route2HandlerFlow`

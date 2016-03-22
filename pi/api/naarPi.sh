@@ -1,5 +1,5 @@
 #!/bin/bash
-./gradlew completeJar
+gradle completeJar
 
 echo "password is raspberry"
-scp build/libs/api-standalone.jar pi@10.130.136.203:~/prak/
+scp build/libs/api-standalone.jar pi@172.16.33.217:~/prak/
