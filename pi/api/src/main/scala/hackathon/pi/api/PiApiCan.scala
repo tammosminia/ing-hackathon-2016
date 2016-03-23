@@ -60,7 +60,7 @@ object PiApiCan extends App {
 
 
   def makeSound: Unit = {
-    val file: File = new File("/home/pi/sounds/lionroar.wav")
+    val file: File = new File("lion-roar2.wav")
     var audioIn: AudioInputStream = null
     try {
       audioIn = AudioSystem.getAudioInputStream(file)
