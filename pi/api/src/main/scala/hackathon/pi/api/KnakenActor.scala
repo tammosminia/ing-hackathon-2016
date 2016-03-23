@@ -34,7 +34,9 @@ class KnakenActor extends Actor with ActorLogging {
   def receive = LoggingReceive {
     case GetKnaken => sender ! balance
     case ExtraKnaak => balance = balance + 150
-    case Extra(geld) => balance = balance + geld
+    case Extra(geld) =>
+      balance = balance + geld
+      Geluid.makeSound
   }
 
 }

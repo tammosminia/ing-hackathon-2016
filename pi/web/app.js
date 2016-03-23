@@ -1,29 +1,28 @@
-var app = angular.module('pushPoc', []);
-app.controller('PushController', ['$http', function($http){
-    var push = this;
+var app = angular.module('Leeuw', []);
+app.controller('LeeuwController', ['$http', '$interval', function($http, $interval){
+    var leeuw = this;
 
-    push.token = "";
-    push.message = "Hello";
-    push.deviceType = "Android";
-    push.sending = "";
+    leeuw.balance = 111;
 
-    push.sendMessage = function() {
-        push.sending = "sending";
-
-        $http.post("messages",
-            {
-                token: push.token,
-                deviceType: push.deviceType,
-                message: push.message,
-                app: "testPush",
-                requester: "intresting"
-            }).
+    leeuw.refresh = function() {
+        $http.get("http://localhost:8089/knaken").
             success(function(data, status, headers, config) {
-                push.sending = "sent. " + status + " " + JSON.stringify(data);
+                leeuw.balance = data;
             }).
             error(function(data, status, headers, config) {
-                push.sending = "error " + status + " " + JSON.stringify(data);
+                leeuw.balance = "error " + status + " " + JSON.stringify(data);
             });
     };
 
+    leeuw.brul = function() {
+        $http.get("http://localhost:8089/brul").
+            success(function(data, status, headers, config) {
+            }).
+            error(function(data, status, headers, config) {
+            });
+    };
+
+    $interval(function(){
+        leeuw.refresh();
+    },1000);
 }]);

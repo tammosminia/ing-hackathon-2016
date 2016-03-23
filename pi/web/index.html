@@ -1,0 +1,21 @@
+<html ng-app="Leeuw">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</head>
+<body ng-controller="LeeuwController as leeuw">
+    <h1>Leeuw API</h1>
+
+    <h2>Rekening</h2>
+    <p>
+        {{leeuw.balance}}
+    </p>
+
+    <h2>Besturing</h2>
+    <button ng-click="leeuw.brul()">brul</button>
+
+
+
+
+</body>
+</html>
