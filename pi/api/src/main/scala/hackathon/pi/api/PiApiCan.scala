@@ -1,5 +1,8 @@
 package hackathon.pi.api
 
+import java.io.File
+import javax.sound.sampled.{AudioInputStream, Clip, AudioSystem}
+
 import akka.actor.{Props, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
@@ -24,6 +27,7 @@ object PiApiCan extends App {
 
   val route: Route = get {
     path("brul") {
+      makeSound
       complete("Brul!")
 //    } ~ pathPrefix("arduino") {
 //      pathEndOrSingleSlash {
@@ -49,4 +53,23 @@ object PiApiCan extends App {
   bindingFuture
     .flatMap(_.unbind()) // trigger unbinding from the port
     .onComplete(_ ⇒ system.shutdown()) // and shutdown when done
+
+
+  def makeSound: Unit = {
+    val file: File = new File("/home/pi/sounds/lionroar.wav")
+    var audioIn: AudioInputStream = null
+    try {
+      audioIn = AudioSystem.getAudioInputStream(file)
+      var clip: Clip = null
+      clip = AudioSystem.getClip
+      clip.open(audioIn)
+      clip.start
+      Thread.sleep(clip.getMicrosecondLength / 3000)
+    }
+    catch {
+      case e: Exception => {
+        e.printStackTrace
+      }
+    }
+  }
 }
