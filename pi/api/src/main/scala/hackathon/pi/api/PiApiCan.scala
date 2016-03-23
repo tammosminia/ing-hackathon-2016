@@ -24,6 +24,7 @@ object PiApiCan extends App {
 
 //  val arduinoActor = system.actorOf(Props[ArduinoActor], "arduinoActor")
   val knakenActor = system.actorOf(Props[KnakenActor], "knakenActor")
+  val motorActor = system.actorOf(Props[MotorActor], "motorActor")
 
   val route: Route = get {
     path("brul") {
@@ -40,8 +41,11 @@ object PiApiCan extends App {
 //      }
     } ~ path("knaken") {
       onComplete(knakenActor ? KnakenActor.GetKnaken) {
-        case Success(knaken: Int) => complete(s"Je hebt $knaken knaken.")
+        case Success(knaken: Int) => complete(s"Je hebt $knaken cent.")
       }
+    } ~ path("motor" / Segment) { actie =>
+      motorActor ! MotorActor.MotorActie(actie)
+      complete("ok")
     }
   }
 

@@ -3,7 +3,7 @@ package hackathon.pi.api
 import java.io.{InputStreamReader, BufferedReader}
 import gnu.io.{SerialPort, CommPortIdentifier, SerialPortEvent, SerialPortEventListener}
 
-class Arduino(onReceive: String => Unit) {
+class Arduino(onReceive: String => Unit, portName: String = "/dev/ttyACM0") {
   private object EventListener extends SerialPortEventListener {
     def serialEvent(oEvent: SerialPortEvent) {
       if (oEvent.getEventType == SerialPortEvent.DATA_AVAILABLE) {
@@ -19,19 +19,19 @@ class Arduino(onReceive: String => Unit) {
 
   private def findPortIdentifier: CommPortIdentifier = {
     //default port names for apple, raspberry, linux or windows
-    val PORT_NAMES = List("/dev/tty.usbserial-A9007UX1", "/dev/ttyACM0", "/dev/ttyUSB0", "COM3")
+//    val PORT_NAMES = List("/dev/tty.usbserial-A9007UX1", "/dev/ttyACM0", "/dev/ttyUSB0", "COM3")
 
     val portEnum = CommPortIdentifier.getPortIdentifiers
     while (portEnum.hasMoreElements) {
       val currPortId: CommPortIdentifier = portEnum.nextElement.asInstanceOf[CommPortIdentifier]
-      if (PORT_NAMES.contains(currPortId.getName)) {
+      if (currPortId.getName == portName) {
         return currPortId
       }
     }
     throw new RuntimeException("Could not find COM port.")
   }
 
-  System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0")
+//  System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0:/dev/ttyACM1")
 
   private val portId = findPortIdentifier
   private val timeout = 2000 // Milliseconds to block while waiting for port open
