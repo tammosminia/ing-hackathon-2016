@@ -5,7 +5,7 @@ import javax.sound.sampled.{AudioInputStream, AudioSystem, Clip}
 
 object Geluid {
   def makeSound: Unit = {
-    val file: File = new File("lion-roar2.wav")
+    val file: File = new File("/home/pi/prak/lion-roar2.wav")
     var audioIn: AudioInputStream = null
     try {
       audioIn = AudioSystem.getAudioInputStream(file)
@@ -13,7 +13,7 @@ object Geluid {
       clip = AudioSystem.getClip
       clip.open(audioIn)
       clip.start
-      //      Thread.sleep(clip.getMicrosecondLength / 3000)
+      Thread.sleep(clip.getMicrosecondLength / 3000)
     }
     catch {
       case e: Exception => {
