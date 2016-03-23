@@ -17,7 +17,7 @@ object PiApiCan extends App {
   implicit val materializer = ActorMaterializer()
   implicit val executionContext: ExecutionContext = system.dispatcher
   implicit val timeout = Timeout(5.seconds)
-  val port = 8081
+  val port = 8089
 
 //  val arduinoActor = system.actorOf(Props[ArduinoActor], "arduinoActor")
   val knakenActor = system.actorOf(Props[KnakenActor], "knakenActor")
@@ -42,7 +42,7 @@ object PiApiCan extends App {
   }
 
   // `route` will be implicitly converted to `Flow` using `RouteResult.route2HandlerFlow`
-  val bindingFuture = Http().bindAndHandle(RouteResult.route2HandlerFlow(route), "localhost", port)
+  val bindingFuture = Http().bindAndHandle(RouteResult.route2HandlerFlow(route), "0.0.0.0", port)
 
   println(s"Lion online at http://localhost:$port/\nPress RETURN to stop...")
   Console.readLine() // for the future transformations
