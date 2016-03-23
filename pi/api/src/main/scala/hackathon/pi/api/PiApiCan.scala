@@ -1,19 +1,20 @@
 package hackathon.pi.api
 
 import java.io.File
-import javax.sound.sampled.{AudioInputStream, Clip, AudioSystem}
+import javax.sound.sampled.{AudioInputStream, AudioSystem, Clip}
 
-import akka.actor.{Props, ActorSystem}
+import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{RouteResult, Route}
+import akka.http.scaladsl.server.{Route, RouteResult}
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import akka.pattern.ask
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import scala.util.Success
+import scala.util.{Random, Success}
 
 object PiApiCan extends App {
   implicit val system = ActorSystem("PiApiSystem")
@@ -27,25 +28,28 @@ object PiApiCan extends App {
   val motorActor = system.actorOf(Props[MotorActor], "motorActor")
 
   val route: Route = get {
-    path("brul") {
-      makeSound
-      complete("Brul!")
-//    } ~ pathPrefix("arduino") {
-//      pathEndOrSingleSlash {
-//        onComplete(arduinoActor ? ArduinoActor.GetInput) {
-//          case Success(input: List[String]) => complete(input.mkString("\n"))
-//        }
-//      } ~ path(Segment) { input: String =>
-//        arduinoActor ! ArduinoActor.SendToArduino(input)
-//        complete(s"arduino - show $input")
-//      }
-    } ~ path("knaken") {
-      onComplete(knakenActor ? KnakenActor.GetKnaken) {
-        case Success(knaken: Int) => complete(s"Je hebt $knaken cent.")
+    respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
+      path("brul") {
+        Geluid.makeSound
+        complete("Brul!")
+  //    } ~ pathPrefix("arduino") {
+  //      pathEndOrSingleSlash {
+  //        onComplete(arduinoActor ? ArduinoActor.GetInput) {
+  //          case Success(input: List[String]) => complete(input.mkString("\n"))
+  //        }
+  //      } ~ path(Segment) { input: String =>
+  //        arduinoActor ! ArduinoActor.SendToArduino(input)
+  //        complete(s"arduino - show $input")
+  //      }
+      } ~ path("knaken") {
+//        complete(s"Je hebt ${Random.nextInt(1000)} cent.")
+        onComplete(knakenActor ? KnakenActor.GetKnaken) {
+          case Success(knaken: Int) => complete(s"Je hebt $knaken cent.")
+        }
+      } ~ path("motor" / Segment) { actie =>
+        motorActor ! MotorActor.MotorActie(actie)
+        complete("ok")
       }
-    } ~ path("motor" / Segment) { actie =>
-      motorActor ! MotorActor.MotorActie(actie)
-      complete("ok")
     }
   }
 
@@ -59,21 +63,4 @@ object PiApiCan extends App {
     .onComplete(_ ⇒ system.shutdown()) // and shutdown when done
 
 
-  def makeSound: Unit = {
-    val file: File = new File("lion-roar2.wav")
-    var audioIn: AudioInputStream = null
-    try {
-      audioIn = AudioSystem.getAudioInputStream(file)
-      var clip: Clip = null
-      clip = AudioSystem.getClip
-      clip.open(audioIn)
-      clip.start
-      Thread.sleep(clip.getMicrosecondLength / 3000)
-    }
-    catch {
-      case e: Exception => {
-        e.printStackTrace
-      }
-    }
-  }
 }
