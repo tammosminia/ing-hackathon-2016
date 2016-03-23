@@ -1,0 +1,51 @@
+<html ng-app="pushPoc">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</head>
+<body ng-controller="PushController as push">
+    <h1>Push API</h1>
+
+    <h2>Install app on your android phone</h2>
+    <p>
+        Download the <a href="testPush.apk">apk</a>.<br/>
+        Get it on your phone. It's the easiest to mail it to your gmail address.<br/>
+        Install the apk. You'll need to accept non-trusted applications for this.<br/>
+        Start the app. It will display the registration id. Copy that.<br/>
+        Now you're ready for receiving messages. Put your registration Id below together with your message and push send.<br/>
+        <br/>
+        This page does not work well on internet explorer 10.<br/>
+        <br/>
+        This works with the TestPush app of 24 feb 2016. TestPush will print the version on standup. If it doesn't, you're using an old version.
+
+    </p>
+
+    <h2>Send a message</h2>
+    <form>
+        <div>
+            <label for="token">Token:</label>
+            <textarea id="token" rows="4" cols="80" ng-model="push.token"></textarea>
+        </div>
+
+        <div>
+            <label for="message">Message:</label>
+            <textarea id="message" rows="4" cols="80" ng-model="push.message">Everything is working well</textarea>
+        </div>
+
+        <div>
+            <label for="deviceType">DeviceType:</label>
+            <select id="deviceType" ng-model="push.deviceType" ng-options="d for d in ['Android', 'Ios']">
+
+            </select>
+        </div>
+
+        <button ng-click="push.sendMessage()">send</button>
+    </form>
+
+    <p id="result">
+        {{push.sending}}
+    </p>
+
+
+</body>
+</html>
